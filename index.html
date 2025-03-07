@@ -3,83 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Number Generator</title>
+    <title>Modern Calculator</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
-            color: #fff;
-            overflow: hidden;
+            height: 100vh;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            font-family: Arial, sans-serif;
         }
-
-        h1 {
-            font-size: 28px;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .number-box {
-            font-size: 50px;
-            font-weight: bold;
+        .calculator {
+            background: #fff;
             padding: 20px;
-            width: 120px;
             border-radius: 10px;
-            background: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s ease-in-out;
-        }
-
-        .number-box.bounce {
-            animation: bounce 0.5s ease-in-out;
-        }
-
-        @keyframes bounce {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-
-        button {
-            margin-top: 20px;
-            padding: 12px 25px;
-            font-size: 18px;
-            font-weight: bold;
-            border: none;
-            border-radius: 25px;
-            background: #ff4b5c;
-            color: #fff;
-            cursor: pointer;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
+            text-align: center;
         }
-
-        button:hover {
-            background: #ff2e44;
-            transform: scale(1.1);
+        .display {
+            width: 100%;
+            height: 60px;
+            font-size: 2rem;
+            text-align: right;
+            padding: 10px;
+            border: none;
+            background: #f3f3f3;
+            border-radius: 5px;
+            margin-bottom: 10px;
         }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        button {
+            padding: 20px;
+            font-size: 1.5rem;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .operator { background: #ff9f00; color: white; }
+        .equal { background: #00c853; color: white; }
+        .clear { background: #d50000; color: white; }
+        button:hover { opacity: 0.8; }
     </style>
 </head>
 <body>
-
-    <h1>🎲 Number Generator 🎲</h1>
-    <div class="number-box" id="randomNumber">0</div>
-    <button onclick="generateRandom()">Generate Number</button>
+    <div class="calculator">
+        <input type="text" class="display" id="display" disabled>
+        <div class="buttons">
+            <button onclick="clearDisplay()" class="clear">C</button>
+            <button onclick="appendValue('/')" class="operator">÷</button>
+            <button onclick="appendValue('*')" class="operator">×</button>
+            <button onclick="appendValue('-')" class="operator">-</button>
+            <button onclick="appendValue('7')">7</button>
+            <button onclick="appendValue('8')">8</button>
+            <button onclick="appendValue('9')">9</button>
+            <button onclick="appendValue('+')" class="operator">+</button>
+            <button onclick="appendValue('4')">4</button>
+            <button onclick="appendValue('5')">5</button>
+            <button onclick="appendValue('6')">6</button>
+            <button onclick="calculate()" class="equal">=</button>
+            <button onclick="appendValue('1')">1</button>
+            <button onclick="appendValue('2')">2</button>
+            <button onclick="appendValue('3')">3</button>
+            <button onclick="appendValue('0')" style="grid-column: span 2;">0</button>
+            <button onclick="appendValue('.')">.</button>
+        </div>
+    </div>
 
     <script>
-        function generateRandom() {
-            let randomNum = Math.floor(Math.random() * 100) + 1; // 1 se 100 tak number generate karega
-            let numBox = document.getElementById("randomNumber");
-            numBox.textContent = randomNum;
-            numBox.classList.add("bounce"); // Animation add karna
-            setTimeout(() => numBox.classList.remove("bounce"), 500); // Animation remove karna
+        function appendValue(value) {
+            document.getElementById('display').value += value;
+        }
+        function clearDisplay() {
+            document.getElementById('display').value = '';
+        }
+        function calculate() {
+            try {
+                document.getElementById('display').value = eval(document.getElementById('display').value);
+            } catch (error) {
+                alert('Invalid Calculation!');
+            }
         }
     </script>
-
 </body>
 </html>
