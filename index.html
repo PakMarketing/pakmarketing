@@ -10,6 +10,13 @@
             font-family: Arial, sans-serif;
             background-color: #222;
             color: white;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
         }
         .board {
             display: grid;
@@ -17,7 +24,6 @@
             grid-template-rows: repeat(3, 100px);
             gap: 5px;
             margin: 20px auto;
-            width: max-content;
         }
         .cell {
             width: 100px;
@@ -32,11 +38,24 @@
         .cell.taken {
             pointer-events: none;
         }
+        .winner {
+            background: green !important;
+        }
         button {
             padding: 10px 20px;
             font-size: 16px;
             margin-top: 10px;
             cursor: pointer;
+        }
+        .flower {
+            position: absolute;
+            top: 0;
+            font-size: 24px;
+            animation: fall 10s linear infinite;
+        }
+        @keyframes fall {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100vh); }
         }
     </style>
 </head>
@@ -63,7 +82,11 @@
                 const [a, b, c] = pattern;
                 if (cells[a] && cells[a] === cells[b] && cells[a] === cells[c]) {
                     status.textContent = `Player ${cells[a]} Wins!`;
+                    pattern.forEach(index => {
+                        document.getElementById(`cell-${index}`).classList.add("winner");
+                    });
                     document.querySelectorAll(".cell").forEach(cell => cell.classList.add("taken"));
+                    generateFlowers();
                     return true;
                 }
             }
@@ -100,6 +123,18 @@
                 cell.id = `cell-${i}`;
                 cell.addEventListener("click", () => handleClick(i));
                 board.appendChild(cell);
+            }
+        }
+        
+        function generateFlowers() {
+            for (let i = 0; i < 50; i++) {
+                let flower = document.createElement("div");
+                flower.classList.add("flower");
+                flower.textContent = "🌸";
+                flower.style.left = Math.random() * window.innerWidth + "px";
+                flower.style.animationDuration = (Math.random() * 10 + 5) + "s";
+                document.body.appendChild(flower);
+                setTimeout(() => flower.remove(), 4000);
             }
         }
         
