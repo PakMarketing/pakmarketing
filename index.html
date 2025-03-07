@@ -3,91 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Calculator</title>
+    <title>Tic-Tac-Toe</title>
     <style>
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: linear-gradient(to right, #4facfe, #00f2fe);
-            font-family: Arial, sans-serif;
-        }
-        .calculator {
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             text-align: center;
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: white;
         }
-        .display {
-            width: 100%;
-            height: 60px;
-            font-size: 2rem;
-            text-align: right;
-            padding: 10px;
-            border: none;
-            background: #f3f3f3;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-        .buttons {
+        .board {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+            margin: 20px auto;
+            width: max-content;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            background: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            cursor: pointer;
+        }
+        .cell.taken {
+            pointer-events: none;
         }
         button {
-            padding: 20px;
-            font-size: 1.5rem;
-            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-top: 10px;
             cursor: pointer;
-            border-radius: 5px;
-            transition: 0.3s;
         }
-        .operator { background: #ff9f00; color: white; }
-        .equal { background: #00c853; color: white; }
-        .clear { background: #d50000; color: white; }
-        button:hover { opacity: 0.8; }
     </style>
 </head>
 <body>
-    <div class="calculator">
-        <input type="text" class="display" id="display" disabled>
-        <div class="buttons">
-            <button onclick="clearDisplay()" class="clear">C</button>
-            <button onclick="appendValue('/')" class="operator">÷</button>
-            <button onclick="appendValue('*')" class="operator">×</button>
-            <button onclick="appendValue('-')" class="operator">-</button>
-            <button onclick="appendValue('7')">7</button>
-            <button onclick="appendValue('8')">8</button>
-            <button onclick="appendValue('9')">9</button>
-            <button onclick="appendValue('+')" class="operator">+</button>
-            <button onclick="appendValue('4')">4</button>
-            <button onclick="appendValue('5')">5</button>
-            <button onclick="appendValue('6')">6</button>
-            <button onclick="calculate()" class="equal">=</button>
-            <button onclick="appendValue('1')">1</button>
-            <button onclick="appendValue('2')">2</button>
-            <button onclick="appendValue('3')">3</button>
-            <button onclick="appendValue('0')" style="grid-column: span 2;">0</button>
-            <button onclick="appendValue('.')">.</button>
-        </div>
-    </div>
-
+    <h1>Tic-Tac-Toe</h1>
+    <div class="board" id="board"></div>
+    <button onclick="resetGame()">Restart</button>
+    <p id="status"></p>
+    
     <script>
-        function appendValue(value) {
-            document.getElementById('display').value += value;
+        const board = document.getElementById("board");
+        const status = document.getElementById("status");
+        let cells = Array(9).fill(null);
+        let currentPlayer = "X";
+        
+        function checkWinner() {
+            const winPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+            
+            for (let pattern of winPatterns) {
+                const [a, b, c] = pattern;
+                if (cells[a] && cells[a] === cells[b] && cells[a] === cells[c]) {
+                    status.textContent = `Player ${cells[a]} Wins!`;
+                    document.querySelectorAll(".cell").forEach(cell => cell.classList.add("taken"));
+                    return true;
+                }
+            }
+            if (!cells.includes(null)) {
+                status.textContent = "It's a Draw!";
+                return true;
+            }
+            return false;
         }
-        function clearDisplay() {
-            document.getElementById('display').value = '';
-        }
-        function calculate() {
-            try {
-                document.getElementById('display').value = eval(document.getElementById('display').value);
-            } catch (error) {
-                alert('Invalid Calculation!');
+        
+        function handleClick(index) {
+            if (!cells[index]) {
+                cells[index] = currentPlayer;
+                document.getElementById(`cell-${index}`).textContent = currentPlayer;
+                document.getElementById(`cell-${index}`).classList.add("taken");
+                if (!checkWinner()) {
+                    currentPlayer = currentPlayer === "X" ? "O" : "X";
+                }
             }
         }
+        
+        function resetGame() {
+            cells.fill(null);
+            board.innerHTML = "";
+            status.textContent = "";
+            currentPlayer = "X";
+            createBoard();
+        }
+        
+        function createBoard() {
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement("div");
+                cell.classList.add("cell");
+                cell.id = `cell-${i}`;
+                cell.addEventListener("click", () => handleClick(i));
+                board.appendChild(cell);
+            }
+        }
+        
+        createBoard();
     </script>
 </body>
 </html>
