@@ -3,142 +3,265 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic-Tac-Toe</title>
+    <title>Pakistan Car Rental - Karachi, Lahore, Islamabad</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            text-align: center;
-            font-family: Arial, sans-serif;
-            background-color: #222;
-            color: white;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
-        .board {
-            display: grid;
-            grid-template-columns: repeat(3, 100px);
-            grid-template-rows: repeat(3, 100px);
-            gap: 5px;
-            margin: 20px auto;
+
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
         }
-        .cell {
-            width: 100px;
-            height: 100px;
-            background: #333;
+
+        body {
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1485291571150-772bcfc10da5?auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 80vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2em;
+            color: white;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .search-form select, .search-form input {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .btn {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.5rem 2rem;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
+            transition: background 0.3s;
         }
-        .cell.taken {
-            pointer-events: none;
+
+        .btn:hover {
+            background: var(--secondary-color);
         }
-        .winner {
-            background: green !important;
+
+        .cities {
+            padding: 4rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
         }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin-top: 10px;
-            cursor: pointer;
+
+        .city-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
         }
-        .flower {
-            position: absolute;
-            top: 0;
-            font-size: 24px;
-            animation: fall 10s linear infinite;
+
+        .city-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
         }
-        @keyframes fall {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(100vh); }
+
+        .city-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .city-image {
+            height: 200px;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .city-info {
+            padding: 1.5rem;
+        }
+
+        .city-info h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .price {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        footer {
+            background: #1f2937;
+            color: white;
+            padding: 3rem 1rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Tic-Tac-Toe</h1>
-    <div class="board" id="board"></div>
-    <button onclick="resetGame()">Restart</button>
-    <p id="status"></p>
-    
-    <script>
-        const board = document.getElementById("board");
-        const status = document.getElementById("status");
-        let cells = Array(9).fill(null);
-        let currentPlayer = "X";
-        
-        function checkWinner() {
-            const winPatterns = [
-                [0, 1, 2], [3, 4, 5], [6, 7, 8],
-                [0, 3, 6], [1, 4, 7], [2, 5, 8],
-                [0, 4, 8], [2, 4, 6]
-            ];
-            
-            for (let pattern of winPatterns) {
-                const [a, b, c] = pattern;
-                if (cells[a] && cells[a] === cells[b] && cells[a] === cells[c]) {
-                    status.textContent = `Player ${cells[a]} Wins!`;
-                    pattern.forEach(index => {
-                        document.getElementById(`cell-${index}`).classList.add("winner");
-                    });
-                    document.querySelectorAll(".cell").forEach(cell => cell.classList.add("taken"));
-                    generateFlowers();
-                    return true;
-                }
-            }
-            if (!cells.includes(null)) {
-                status.textContent = "It's a Draw!";
-                return true;
-            }
-            return false;
-        }
-        
-        function handleClick(index) {
-            if (!cells[index]) {
-                cells[index] = currentPlayer;
-                document.getElementById(`cell-${index}`).textContent = currentPlayer;
-                document.getElementById(`cell-${index}`).classList.add("taken");
-                if (!checkWinner()) {
-                    currentPlayer = currentPlayer === "X" ? "O" : "X";
-                }
-            }
-        }
-        
-        function resetGame() {
-            cells.fill(null);
-            board.innerHTML = "";
-            status.textContent = "";
-            currentPlayer = "X";
-            createBoard();
-        }
-        
-        function createBoard() {
-            for (let i = 0; i < 9; i++) {
-                const cell = document.createElement("div");
-                cell.classList.add("cell");
-                cell.id = `cell-${i}`;
-                cell.addEventListener("click", () => handleClick(i));
-                board.appendChild(cell);
-            }
-        }
-        
-        function generateFlowers() {
-            for (let i = 0; i < 50; i++) {
-                let flower = document.createElement("div");
-                flower.classList.add("flower");
-                flower.textContent = "🌸";
-                flower.style.left = Math.random() * window.innerWidth + "px";
-                flower.style.animationDuration = (Math.random() * 10 + 5) + "s";
-                document.body.appendChild(flower);
-                setTimeout(() => flower.remove(), 4000);
-            }
-        }
-        
-        createBoard();
-    </script>
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">PakCarRental</div>
+            <div class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#cities">Cities</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Rent Your Dream Car Today</h1>
+            <p>Explore Pakistan's major cities with our premium car rental service</p>
+            <div class="search-form">
+                <select>
+                    <option>Select City</option>
+                    <option>Karachi</option>
+                    <option>Lahore</option>
+                    <option>Islamabad</option>
+                </select>
+                <input type="date" placeholder="Pick-up Date">
+                <input type="date" placeholder="Return Date">
+                <button class="btn">Search Cars</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="cities" id="cities">
+        <h2>Our Service Cities</h2>
+        <div class="city-grid">
+            <div class="city-card">
+                <img src="https://images.unsplash.com/photo-1567495447006-7320dbaf4041?auto=format&fit=crop&w=600&q=80" alt="Karachi" class="city-image">
+                <div class="city-info">
+                    <h3>Karachi</h3>
+                    <p>Wide range of vehicles available</p>
+                    <p class="price">Starting from Rs. 5,000/day</p>
+                </div>
+            </div>
+            <div class="city-card">
+                <img src="https://images.unsplash.com/photo-1567495447006-7320dbaf4041?auto=format&fit=crop&w=600&q=80" alt="Lahore" class="city-image">
+                <div class="city-info">
+                    <h3>Lahore</h3>
+                    <p>Luxury and economy options</p>
+                    <p class="price">Starting from Rs. 4,500/day</p>
+                </div>
+            </div>
+            <div class="city-card">
+                <img src="https://images.unsplash.com/photo-1567495447006-7320dbaf4041?auto=format&fit=crop&w=600&q=80" alt="Islamabad" class="city-image">
+                <div class="city-info">
+                    <h3>Islamabad</h3>
+                    <p>Premium car selection</p>
+                    <p class="price">Starting from Rs. 6,000/day</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="footer-content">
+            <div>
+                <h3>Contact Us</h3>
+                <p>Phone: 0316 1610046</p>
+                <p>Email: info@pakcarrental.com</p>
+            </div>
+            <div>
+                <h3>Cities</h3>
+                <p>Karachi Office: Block 7, Clifton</p>
+                <p>Lahore Office: Gulberg III</p>
+                <p>Islamabad Office: F-7 Markaz</p>
+            </div>
+            <div>
+                <h3>Working Hours</h3>
+                <p>Monday - Saturday</p>
+                <p>9:00 AM - 8:00 PM</p>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
