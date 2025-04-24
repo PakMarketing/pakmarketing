@@ -3,86 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analog Clock - Karachi Time</title>
+    <title>Fun Times Tables!</title>
     <style>
         body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #FFD1DC;
             text-align: center;
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            transition: background-color 0.5s;
         }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
         h1 {
-            font-size: 35px;
-            color: #333;
+            color: #FF1493;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
-        canvas {
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0 0 10px rgba(0,0,0,0.3);
-            border: 5px solid black;
+        
+        .select-group {
+            margin: 20px 0;
+            font-size: 1.2em;
+            color: #8B008B;
+        }
+        
+        select {
+            font-size: 1em;
+            padding: 8px;
+            border-radius: 5px;
+            border: 2px solid #8B008B;
+            background-color: white;
+            font-family: Verdana, sans-serif;
+        }
+        
+        .equation-display {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 40px 0;
+            color: #4B0082;
+            font-family: 'Arial Rounded MT Bold', sans-serif;
+            min-height: 1.5em;
+            transition: color 0.3s;
+        }
+        
+        button {
+            font-size: 1.2em;
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: Verdana, sans-serif;
+            transition: all 0.3s;
+        }
+        
+        #nextBtn {
+            background-color: #98FB98;
+            color: #006400;
+        }
+        
+        #nextBtn:hover {
+            background-color: #7CFC00;
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        #colorBtn {
+            background-color: #FFA07A;
+            color: #8B0000;
+        }
+        
+        #colorBtn:hover {
+            background-color: #FF6347;
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        button:active {
+            transform: scale(0.98);
         }
     </style>
 </head>
 <body>
-    <h1>Karachi Analog Clock</h1>
-    <canvas id="clock" width="400" height="400"></canvas>
+    <div class="container">
+        <h1>Multiplication Tables Fun!</h1>
+        
+        <div class="select-group">
+            <label for="tableSelect">Select a Table (6-15):</label>
+            <select id="tableSelect">
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+            </select>
+        </div>
+        
+        <div class="equation-display" id="equationDisplay">
+            6 × 1 = 6
+        </div>
+        
+        <button id="nextBtn">Next Number</button>
+        <button id="colorBtn">Fun Colors!</button>
+    </div>
 
     <script>
-        function drawClock() {
-            var canvas = document.getElementById("clock");
-            var ctx = canvas.getContext("2d");
-            var now = new Date();
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            var centerX = canvas.width / 2;
-            var centerY = canvas.height / 2;
-            var radius = canvas.width / 2 - 20;
-
-            // Draw Circle
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-            ctx.fillStyle = "white";
-            ctx.fill();
-            ctx.lineWidth = 5;
-            ctx.stroke();
-
-            // Draw Numbers (1-12)
-            ctx.font = "30px Arial";
-            ctx.fillStyle = "black";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-
-            for (var i = 1; i <= 12; i++) {
-                var angle = (i - 3) * (Math.PI / 6);
-                var x = centerX + Math.cos(angle) * (radius - 30);
-                var y = centerY + Math.sin(angle) * (radius - 30);
-                ctx.fillText(i, x, y);
-            }
-
-            // Convert to Karachi Time
-            var karachiTime = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Karachi"}));
-
-            function drawHand(length, width, angle, color) {
-                ctx.beginPath();
-                ctx.lineWidth = width;
-                ctx.lineCap = "round";
-                ctx.moveTo(centerX, centerY);
-                ctx.lineTo(centerX + length * Math.cos(angle), centerY + length * Math.sin(angle));
-                ctx.strokeStyle = color;
-                ctx.stroke();
-            }
-
-            var sec = karachiTime.getSeconds() * Math.PI / 30;
-            var min = (karachiTime.getMinutes() + karachiTime.getSeconds() / 60) * Math.PI / 30;
-            var hour = (karachiTime.getHours() % 12 + karachiTime.getMinutes() / 60) * Math.PI / 6;
-
-            drawHand(radius * 0.5, 8, hour - Math.PI / 2, "black");
-            drawHand(radius * 0.7, 6, min - Math.PI / 2, "black");
-            drawHand(radius * 0.9, 3, sec - Math.PI / 2, "red");
-
-            setTimeout(drawClock, 1000);
+        // Current state
+        let currentTable = 6;
+        let currentMultiplier = 1;
+        const maxMultiplier = 15;
+        
+        // Color options
+        const textColors = ['#FF1493', '#8A2BE2', '#0000FF', '#008000', '#FF8C00', '#FF0000'];
+        const bgColors = ['#FFD1DC', '#E0BBE4', '#B5EAD7', '#FFDFD3', '#F0E6FF', '#C9E4CA'];
+        
+        // DOM elements
+        const tableSelect = document.getElementById('tableSelect');
+        const equationDisplay = document.getElementById('equationDisplay');
+        const nextBtn = document.getElementById('nextBtn');
+        const colorBtn = document.getElementById('colorBtn');
+        const body = document.body;
+        
+        // Initialize
+        updateDisplay();
+        
+        // Event listeners
+        tableSelect.addEventListener('change', changeTable);
+        nextBtn.addEventListener('click', nextNumber);
+        colorBtn.addEventListener('click', randomColors);
+        
+        // Functions
+        function changeTable() {
+            currentTable = parseInt(tableSelect.value);
+            currentMultiplier = 1;
+            updateDisplay();
         }
-
-        drawClock();
+        
+        function nextNumber() {
+            if (currentMultiplier < maxMultiplier) {
+                currentMultiplier++;
+            } else {
+                currentMultiplier = 1;
+            }
+            updateDisplay();
+        }
+        
+        function updateDisplay() {
+            const product = currentTable * currentMultiplier;
+            equationDisplay.textContent = `${currentTable} × ${currentMultiplier} = ${product}`;
+            
+            // Change text color
+            const randomColor = textColors[Math.floor(Math.random() * textColors.length)];
+            equationDisplay.style.color = randomColor;
+        }
+        
+        function randomColors() {
+            // Change background color
+            const randomBgColor = bgColors[Math.floor(Math.random() * bgColors.length)];
+            body.style.backgroundColor = randomBgColor;
+            
+            // Also update equation color
+            updateDisplay();
+        }
     </script>
 </body>
 </html>
